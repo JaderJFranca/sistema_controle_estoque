@@ -14,7 +14,7 @@ Sub Entrada_Estoque()
         Sheets("Ajustes").Unprotect Password:="8494"
         
         Sheets("Rastreabilidade").Range("A2") = Sheets("Ajustes").Range("C2")
-        Sheets("Rastreabilidade").Range("B2") = Sheets("Ajustes").Range("B5")
+        Sheets("Rastreabilidade").Range("B2") = UCase(Sheets("Ajustes").Range("B5"))
         Sheets("Rastreabilidade").Range("C2") = Sheets("Ajustes").Range("C5")
         Sheets("Rastreabilidade").Range("D2") = Sheets("Ajustes").Range("D5")
         Sheets("Rastreabilidade").Range("E2") = Sheets("Ajustes").Range("E5")
@@ -47,7 +47,7 @@ Sub Saida_Estoque()
     Sheets("Ajustes").Unprotect Password:="8494"
     
     Sheets("Rastreabilidade").Range("A2") = Sheets("Ajustes").Range("C2")
-    Sheets("Rastreabilidade").Range("B2") = Sheets("Ajustes").Range("B5")
+    Sheets("Rastreabilidade").Range("B2") = UCase(Sheets("Ajustes").Range("B5"))
     Sheets("Rastreabilidade").Range("C2") = Sheets("Ajustes").Range("C5").Value * (-1)
     Sheets("Rastreabilidade").Range("D2") = Sheets("Ajustes").Range("D5")
     Sheets("Rastreabilidade").Range("E2") = Sheets("Ajustes").Range("E5")
@@ -134,4 +134,30 @@ Sub Valida_Estoque()
         End
     End If
 
+End Sub
+
+Sub SugerirValor()
+    Dim codigo As String
+    Dim celula As Range
+    Dim encontrado As Boolean
+    
+    ' Pega o valor da célula de local (código a ser procurado)
+    codigo = Sheets("Ajustes").Range("E5").Value
+    encontrado = False
+    
+    ' Percorre a de local em estoque para encontrar o código
+    For Each celula In Sheets("Estoque").Range("E1:E20000") ' Ajuste o intervalo conforme necessário
+        If celula.Value = codigo Then
+            ' Sugere o valor na célula para código do produto
+            Sheets("Ajustes").Range("B5").Value = celula.Offset(0, -3).Value ' Procura código do produto
+             Sheets("Ajustes").Range("F5").Value = celula.Offset(0, 1).Value ' Procura empresa
+            encontrado = True
+            Exit For
+        End If
+    Next celula
+    
+    ' Se o código não for encontrado, exibe uma mensagem
+    If Not encontrado Then
+        MsgBox "Código não encontrado.", vbExclamation
+    End If
 End Sub
